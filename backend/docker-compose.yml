@@ -5,23 +5,48 @@ services:
     ports:
       - "8000:8000"
     env_file: ../.env
+    environment:
+      ENV: prod
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@postgres:5432/legaldoc
+      BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      POPPLER_PATH: /usr/bin
+      PIPELINE_LOG_LEVEL: INFO
+      PARSER_LOG_LEVEL: DEBUG
+      DOC_CLS_LOG_LEVEL: DEBUG
+      LOG_LEVEL: DEBUG
     volumes:
       - ./app:/app/app
       - ../data:/data
+    restart: unless-stopped
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   worker:
     build: .
     command: ["celery", "-A", "app.services.celery_app.celery_app", "worker", "-l", "info"]
     env_file: ../.env
+    environment:
+      ENV: prod
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@postgres:5432/legaldoc
+      BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      POPPLER_PATH: /usr/bin
+      PIPELINE_LOG_LEVEL: INFO
+      PARSER_LOG_LEVEL: DEBUG
+      DOC_CLS_LOG_LEVEL: DEBUG
+      LOG_LEVEL: DEBUG
     volumes:
       - ./app:/app/app
       - ../data:/data
+    restart: unless-stopped
     depends_on:
-      - api
-      - redis
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   postgres:
     image: postgres:15
     environment:
@@ -32,9 +57,21 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d legaldoc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   redis:
     image: redis:7
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
 volumes:
   pgdata:

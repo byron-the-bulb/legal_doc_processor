@@ -1,0 +1,39 @@
+# flyctl launch added from venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/.gitignore
+# Build files
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/target
+
+# sdk-core is a library we allow consumers pin specific versions.
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/Cargo.lock
+
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/.idea
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/*.iml
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/*~
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/.aider*
+
+# Ignore generated protobuf files
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/src/protos/*.rs
+!venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/src/protos/mod.rs
+
+# Coverage
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/tarpaulin-report.html
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/machine_coverage
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/bindings
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/core/machine_coverage
+
+# Keep secrets here
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/.cloud_certs
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/**/cloud_envs.fish
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/.claude/settings.local.json
+
+# flyctl launch added from venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_cloud_upstream/.gitignore
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_cloud_upstream/.idea
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_cloud_upstream/.gen
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_cloud_upstream/.vscode
+
+# flyctl launch added from venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_upstream/.gitignore
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_upstream/.idea
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_upstream/.gen
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_upstream/.vscode
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_upstream/.stamp
+venv/lib/python3.10/site-packages/temporalio/bridge/sdk-core/sdk-core-protos/protos/api_upstream/**/*~
+fly.toml
