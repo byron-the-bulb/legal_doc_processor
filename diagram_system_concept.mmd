@@ -1,0 +1,41 @@
+flowchart TB
+  %% Ingestion
+  subgraph Ingestion
+    U[User]
+    API[Upload API]
+    DB[Document Store]
+    Q[Process Task]
+    U --> API --> DB --> Q
+  end
+
+  %% Processing Pipeline
+  subgraph Pipeline
+    ET[Extract Text and PDF Previews]
+    CLS[DocumentClassificationAgent]
+    DEC{Known type?}
+    PRS[Parser Agents: Court, Insurance, Medical, ...]
+    VAL[DateValidationAgent]
+    OBL[ObligationExtractorAgent]
+    MERGE[Merge Results]
+    CAL[CalendarIntegrationAgent]
+    ESC[HumanEscalationAgent]
+    RES[Persist Results]
+
+    ET --> CLS --> DEC
+    DEC -- No --> ESC
+    DEC -- Yes --> PRS
+    PRS --> VAL --> OBL --> MERGE --> CAL --> ESC
+    ESC --> RES
+  end
+
+  %% Delivery
+  subgraph Delivery
+    RAPI[Results API]
+    UI[Frontend]
+    RES --> RAPI --> UI
+  end
+
+  %% Data paths
+  DB -.-> ET
+  ET -.-> CLS
+  ET -.-> PRS

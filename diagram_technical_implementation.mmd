@@ -1,0 +1,64 @@
+flowchart LR
+  %% Client
+  subgraph Client
+    UI[Frontend UI]
+  end
+
+  %% Backend
+  subgraph Backend
+    API[FastAPI + Uvicorn]
+    STORE[Data volume /data]
+    DB[Postgres]
+    TXT[Extract text: PyPDF2, Docx, Tesseract]
+    PREV[PDF previews: pdf2image + poppler]
+    CLS[DocumentClassificationAgent]
+    DEC{Known document type}
+    PRS[Parser agents: Court, Insurance, Medical]
+    VAL[DateValidationAgent]
+    OBL[ObligationExtractorAgent]
+    MERGE[Merge results]
+    CAL[CalendarIntegrationAgent]
+    ESC[HumanEscalationAgent]
+  end
+
+  %% External
+  subgraph External
+    OAI[OpenAI API]
+    REDIS[Redis broker]
+  end
+
+  %% Workers (optional)
+  subgraph Workers
+    WRK[Celery worker]
+  end
+
+  %% Client to backend
+  UI -->|HTTP| API
+
+  %% Upload and persistence
+  API --> STORE
+  API --> DB
+
+  %% Task dispatch
+  API -->|enqueue or inline| WRK
+  API -.->|optional| REDIS
+  WRK -.->|optional| REDIS
+
+  %% Pipeline
+  WRK --> TXT
+  TXT --> PREV
+  TXT --> CLS
+  PREV --> CLS
+  CLS --> DEC
+  DEC -- No --> ESC
+  DEC -- Yes --> PRS
+  PRS --> VAL --> OBL --> MERGE --> CAL --> ESC
+
+  %% External calls and persistence
+  CLS --> OAI
+  PRS --> OAI
+  CAL --> DB
+  ESC --> DB
+
+  %% Results back to client
+  DB --> API --> UI
